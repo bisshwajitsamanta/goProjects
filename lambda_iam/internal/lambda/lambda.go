@@ -19,6 +19,7 @@ type LambdaEvent struct {
 	KeyLastUsed *iam.GetAccessKeyLastUsedOutput
 }
 
+//Connect - This method connects to IAM and get access keys
 func (l *LambdaEvent) Connect() error {
 	fmt.Println("Connected to Lambda !!")
 
@@ -37,9 +38,11 @@ func (l *LambdaEvent) Connect() error {
 		fmt.Println("Error:", err)
 		return err
 	}
-	fmt.Println("Success:", *l.KeyLastUsed.AccessKeyLastUsed)
+	fmt.Println("Success:", *l.KeyLastUsed.AccessKeyLastUsed.LastUsedDate)
 	return nil
 }
+
+// Next Goal is if the access key is last used more than say 200 days then rotate the keys
 
 func (l *LambdaEvent) Access() error {
 	return nil

@@ -20,6 +20,16 @@ func Run() error {
 		return err
 	}
 
+	err = app.Keycheck.Access()
+	if err != nil {
+		return err
+	}
+
+	err = app.Keycheck.ListUser()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

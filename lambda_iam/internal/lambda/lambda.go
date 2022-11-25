@@ -6,11 +6,14 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/iam"
 	"os"
+	"time"
 )
 
 type Service interface {
 	Connect() error
 	Access() error
+	ListUser() error
+	RotateKeys() error
 }
 
 type LambdaEvent struct {
@@ -38,13 +41,42 @@ func (l *LambdaEvent) Connect() error {
 		fmt.Println("Error:", err)
 		return err
 	}
-	fmt.Println("Success:", *l.KeyLastUsed.AccessKeyLastUsed.LastUsedDate)
 	return nil
 }
 
 // Next Goal is if the access key is last used more than say 200 days then rotate the keys
 
+// Access - This method defines the logic if the key is not used for say
 func (l *LambdaEvent) Access() error {
+	date := time.Now().UTC()
+	diff := date.Sub(*l.KeyLastUsed.AccessKeyLastUsed.LastUsedDate)
+	fmt.Println("Number of Days spend after Last Used:", int(diff.Hours()/24), "days")
+	return nil
+}
+
+func (l *LambdaEvent) ListUser() error {
+	var err error
+	l.sess, err = session.NewSession(&aws.Config{
+		Region: aws.String("us-east-1"),
+	})
+	if err != nil {
+		return err
+	}
+	l.svc = iam.New(l.sess)
+
+	result, err := l.svc.ListAccessKeys(&iam.ListAccessKeysInput{
+		MaxItems: aws.Int64(5),
+		UserName: aws.String("s3admin"),
+	})
+	if err != nil {
+		return err
+	}
+	fmt.Println("Success: ", result.AccessKeyMetadata)
+	return nil
+}
+
+func (l *LambdaEvent) RotateKeys() error {
+
 	return nil
 }
 

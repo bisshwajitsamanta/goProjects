@@ -19,7 +19,6 @@ func Run() error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("Successfully Connected to IAM!")
 
 	return nil
 }

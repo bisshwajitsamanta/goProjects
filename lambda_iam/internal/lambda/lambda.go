@@ -20,6 +20,7 @@ type LambdaEvent struct {
 	sess        *session.Session
 	svc         *iam.IAM
 	KeyLastUsed *iam.GetAccessKeyLastUsedOutput
+	KeysList    []string
 }
 
 //Connect - This method connects to IAM and get access keys
@@ -54,8 +55,11 @@ func (l *LambdaEvent) Access() error {
 	return nil
 }
 
+//ListUser - This method defines how many access ID's does an user have and return to a list
 func (l *LambdaEvent) ListUser() error {
-	var err error
+	var (
+		err error
+	)
 	l.sess, err = session.NewSession(&aws.Config{
 		Region: aws.String("us-east-1"),
 	})
@@ -71,7 +75,11 @@ func (l *LambdaEvent) ListUser() error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("Success: ", result.AccessKeyMetadata)
+	// Goal is to have all the access keys in a list
+	for _, v := range result.AccessKeyMetadata {
+		l.KeysList = append(l.KeysList, *v.AccessKeyId)
+	}
+	fmt.Println(l.KeysList)
 	return nil
 }
 

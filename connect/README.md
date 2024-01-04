@@ -3,9 +3,8 @@ CLI for Multipurpose Utility
 
 Plan to include purpose
 
-* Switch Status -> 
-  * Shows the current aws credentials account
-  * Shows the current context if selected
-  * Shows the current namespace if selected any
-* Switch cluster-name <shorthand for cluster>
-  * Switch to the mentioned cluster
+* Goal:
+  1. Connect through Teleport CLI or API to k8s cluster
+  2. Execute kubectl commands like describe/logs/get
+  3. Rails c execution
+  4. Psql query execution

@@ -1,4 +1,4 @@
-module switch
+module connect
 
 go 1.20
 

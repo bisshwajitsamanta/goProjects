@@ -10,7 +10,7 @@ import (
 var cfgFile string
 
 var RootCmd = &cobra.Command{
-	Use:   "switch",
+	Use:   "connect",
 	Short: "Utility Tool",
 	Long:  `Give Devops Guys capability to switch between sessions`,
 }

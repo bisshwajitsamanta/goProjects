@@ -1,15 +1,25 @@
+/*
+	Practise Questions:
+		1. Fibonacci Series
+		2. Nested Slice
+*/
+
 package main
 
 import "fmt"
 
-func factorial(n int) int {
-	value := 1
-	for i := 1; i <= n; i++ {
-		value *= i
+func NestedSlice(numbers [][]int) []int {
+	sums := make([]int, len(numbers))
+
+	for i, nestedValue := range numbers {
+		for _, value := range nestedValue {
+			sums[i] += value
+		}
 	}
-	return value
+
+	return sums
 }
 
 func main() {
-	fmt.Println(factorial(5))
+	fmt.Println(NestedSlice([][]int{{3, 4, 5}, {5, -7, -8}, {4, 25}}))
 }

@@ -1,35 +1,35 @@
-package main
+package orders
 
 import "fmt"
 
-// order - Order Struct shows the properties of the order classes.
-type order struct {
+// Order - Order Struct shows the properties of the Order classes.
+type Order struct {
 	ProductCode int
 	Quantity    int
-	Status      orderStatus
+	Status      OrderStatus
 }
 
-// orderStatus - Custom type as int
-type orderStatus int
+// OrderStatus - Custom type as int
+type OrderStatus int
 
 // const - iota keyword makes it easy to define a sequence of related constants without manually assigning each value.
 const (
-	none orderStatus = iota
+	none OrderStatus = iota
 	newly
 	received
 	reserved
 	filled
 )
 
-var orders []order
+var Orders []Order
 
-// String - String Method is accepting order type with receiver as "o" . This means String method can be called on any variable of type order
-func (o order) String() string {
+// String - String Method is accepting Order type with receiver as "o" . This means String method can be called on any variable of type Order
+func (o Order) String() string {
 	return fmt.Sprintf("Product Code: %v, Quantity: %v, Status: %v\n", o.ProductCode, o.Quantity, oderStatusToText(o.Status))
 }
 
 // orderStatusToText - This function takes integer status from const values assigned as iota and translate to a string
-func oderStatusToText(o orderStatus) string {
+func oderStatusToText(o OrderStatus) string {
 	switch o {
 	case none:
 		return "None"

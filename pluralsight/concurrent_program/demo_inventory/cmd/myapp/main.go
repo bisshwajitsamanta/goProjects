@@ -1,25 +1,31 @@
 package main
 
 import (
+	"demo_inventory/internal/orders"
 	"encoding/json"
 	"fmt"
+	"sync"
 )
 
 func main() {
-	receiveOrders()
-	fmt.Println(orders)
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go receiveOrders(&wg)
+	wg.Wait()
+	fmt.Println(orders.Orders)
 }
 
 // receiveOrders - Take the values from rawOrders Json object and translate into Go Object
-func receiveOrders() {
+func receiveOrders(wg *sync.WaitGroup) {
+	defer wg.Done()
 	for _, rawOrder := range rawOrders {
-		var newOrder order
+		var newOrder orders.Order
 		err := json.Unmarshal([]byte(rawOrder), &newOrder)
 		if err != nil {
 			fmt.Println("Error:", err)
 			continue
 		}
-		orders = append(orders, newOrder)
+		orders.Orders = append(orders.Orders, newOrder)
 	}
 }
 

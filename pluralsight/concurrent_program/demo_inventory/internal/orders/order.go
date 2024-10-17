@@ -15,7 +15,7 @@ type OrderStatus int
 // const - iota keyword makes it easy to define a sequence of related constants without manually assigning each value.
 const (
 	none OrderStatus = iota
-	newly
+	Newly
 	received
 	reserved
 	filled
@@ -33,7 +33,7 @@ func oderStatusToText(o OrderStatus) string {
 	switch o {
 	case none:
 		return "None"
-	case newly:
+	case Newly:
 		return "Newly"
 	case received:
 		return "Received"

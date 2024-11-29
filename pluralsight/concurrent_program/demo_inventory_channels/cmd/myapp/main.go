@@ -24,30 +24,42 @@ func main() {
 	go receiveOrders(receiveOrderCh)
 	go validateOrders(receiveOrderCh, validateOrderCh, invalidOrderCh)
 	wg.Add(1)
-	go func() {
-		order := <-validateOrderCh
-		fmt.Printf("Valid order received: %v\n", order)
+	go func(validOrderCh <-chan orders.Order, invalidOrderCh <-chan orders.InvalidOrder) {
+	loop:
+		for {
+			select {
+			case order, ok := <-validateOrderCh:
+				if ok {
+					fmt.Printf("Valid order received: %v\n", order)
+				} else {
+					break loop
+				}
+			case order, ok := <-invalidOrderCh:
+				if ok {
+					fmt.Printf("Invalid order received: %v. Issue: %v\n", order, order.Error)
+				} else {
+					break loop
+				}
+			}
+		}
 		wg.Done()
-	}()
-	go func() {
-		order := <-invalidOrderCh
-		fmt.Printf("Invalid order received: %v. Issue: %v\n", order, order.Error)
-		wg.Done()
-	}()
+	}(validateOrderCh, invalidOrderCh)
 	wg.Wait()
 }
 
 // validateOrders - This function is going to receive the orders and validate for negative orders
 func validateOrders(in, out chan orders.Order, errCh chan orders.InvalidOrder) {
-	// Read one order from the 'in' channel
-	order := <-in
-	if order.Quantity <= 0 {
-		// error condition
-		errCh <- orders.InvalidOrder{Order: order, Error: errors.New("invalid order quantity, quantity must be greater than zero")}
-	} else {
-		// success path
-		out <- order
+	for order := range in {
+		if order.Quantity <= 0 {
+			// error condition
+			errCh <- orders.InvalidOrder{Order: order, Error: errors.New("invalid order quantity, quantity must be greater than zero")}
+		} else {
+			// success path
+			out <- order
+		}
 	}
+	close(out)
+	close(errCh)
 }
 
 // receiveOrders - Take the values from rawOrders Json object and translate into Go Object
@@ -61,6 +73,7 @@ func receiveOrders(out chan<- orders.Order) {
 		}
 		out <- newOrder
 	}
+	close(out)
 }
 
 // rawOrders - Value grabbed from web services or database in a json format
